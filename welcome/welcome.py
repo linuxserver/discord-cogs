@@ -57,8 +57,8 @@ class Welcome:
         base user role to the new member. This command can be called by anyone.
         """
 
-        member_to_elevate = ctx.message.author
         server = ctx.message.server
+        member_to_elevate = discord.utils.get(server.members, name=ctx.message.author)
 
         LOGGER.info("User {} invoked readrules command.".format(member_to_elevate))
 
