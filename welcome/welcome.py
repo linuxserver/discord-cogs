@@ -56,8 +56,6 @@ class Welcome:
         Elevates a user's access to all public channels
         """
 
-        LOGGER.info(ctx.message)
-
         server = ctx.message.server
 
         # User likely invoked command from a DM
@@ -82,7 +80,7 @@ class Welcome:
             if not member_already_user:
 
                 roles = server.roles
-                LOGGER.info("All roles: {}".format(roles))
+                LOGGER.info("{}, {}".format(role.id, role.name)) for role in roles
 
                 LOGGER.info("Adding role {} to member {}".format(SETTINGS['base_role'], member_to_elevate))
                 base_role = discord.utils.get(roles, name=SETTINGS['base_role'])
