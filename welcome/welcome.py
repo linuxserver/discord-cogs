@@ -38,7 +38,8 @@ SETTINGS = {
     'greeting': "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you read the #rules, then ping us with `^readrules` to get access to all of our public channels.",
     'elevate_confirm': "Thanks, you now have access to all public channels!",
     'already_verified': "You already have access to our public channels",
-    'base_role': "verified"
+    'base_role': "verified",
+    'default_channel': "new-members"
 }
 
 class Welcome:
@@ -58,7 +59,6 @@ class Welcome:
         """
 
         server = ctx.message.server
-        channel = ctx.message.channel
 
         # User likely invoked command from a DM
         if server is None:
@@ -94,10 +94,8 @@ class Welcome:
 
         LOGGER.info("New member has joined: {}".format(member))
 
-        channel = member.server.default_channel
-        LOGGER.debug("Current default channel is {}".format(channel))
-
-        await self.bot.send_message(channel, SETTINGS['greeting'].format(member))
+        new_members_channel = discord.utils.get(member.server.channels, name=SETTINGS['default_channel'])
+        await self.bot.send_message(new_members_channel, SETTINGS['greeting'].format(member))
 
 def setup(bot):
 
