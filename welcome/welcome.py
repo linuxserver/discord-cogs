@@ -87,7 +87,7 @@ class Welcome:
         channel = member.server.default_channel
         LOGGER.debug("Current default channel is {}".format(channel))
 
-        self.bot.say(channel, SETTINGS['greeting'].format(member))
+        await self.bot.say(channel, SETTINGS['greeting'].format(member))
 
 def setup(bot):
 
