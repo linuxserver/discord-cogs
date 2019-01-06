@@ -37,7 +37,7 @@ from discord.ext import commands
 SETTINGS = {
     'greeting': "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you read the #rules, then ping us with `^readrules` to get access to all of our public channels.",
     'elevate_confirm': "Thanks, you now have access to all public channels!",
-    'base_role': "@user"
+    'base_role': "verified"
 }
 
 class Welcome:
@@ -51,12 +51,13 @@ class Welcome:
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def readrules(self, ctx):
+    async def readrules(self, ctx: commands.bot.Context):
         """
         Elevates a user's access to all public channels
         """
 
         server = ctx.message.server
+        channel = ctx.message.channel
 
         # User likely invoked command from a DM
         if server is None:
@@ -75,16 +76,12 @@ class Welcome:
 
                     LOGGER.info("Member {} already has a {} role".format(member_to_elevate, SETTINGS['base_role']))
                     member_already_user = True
-                    await self.bot.say("You already have access to our public channels")
+                    await self.bot.send_message(member_to_elevate, "You already have access to our public channels")
 
             if not member_already_user:
 
-                roles = server.roles
-                for role in roles:
-                    LOGGER.info("{}, {}".format(role.id, role.name)) 
-
                 LOGGER.info("Adding role {} to member {}".format(SETTINGS['base_role'], member_to_elevate))
-                base_role = discord.utils.get(roles, name=SETTINGS['base_role'])
+                base_role = discord.utils.get(server.roles, name=SETTINGS['base_role'])
 
                 await self.bot.add_roles(member_to_elevate, base_role)
                 await self.bot.send_message(member_to_elevate, SETTINGS['elevate_confirm'])
