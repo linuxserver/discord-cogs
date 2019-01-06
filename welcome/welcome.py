@@ -80,7 +80,8 @@ class Welcome:
             if not member_already_user:
 
                 roles = server.roles
-                LOGGER.info("{}, {}".format(role.id, role.name)) for role in roles
+                for role in roles:
+                    LOGGER.info("{}, {}".format(role.id, role.name)) 
 
                 LOGGER.info("Adding role {} to member {}".format(SETTINGS['base_role'], member_to_elevate))
                 base_role = discord.utils.get(roles, name=SETTINGS['base_role'])
