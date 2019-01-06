@@ -37,6 +37,7 @@ from discord.ext import commands
 SETTINGS = {
     'greeting': "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you read the #rules, then ping us with `^readrules` to get access to all of our public channels.",
     'elevate_confirm': "Thanks, you now have access to all public channels!",
+    'already_verified': "You already have access to our public channels",
     'base_role': "verified"
 }
 
@@ -76,7 +77,7 @@ class Welcome:
 
                     LOGGER.info("Member {} already has a {} role".format(member_to_elevate, SETTINGS['base_role']))
                     member_already_user = True
-                    await self.bot.send_message(member_to_elevate, "You already have access to our public channels")
+                    await self.bot.send_message(member_to_elevate, SETTINGS['already_verified'])
 
             if not member_already_user:
 
@@ -96,7 +97,7 @@ class Welcome:
         channel = member.server.default_channel
         LOGGER.debug("Current default channel is {}".format(channel))
 
-        await self.bot.say(channel, SETTINGS['greeting'].format(member))
+        await self.bot.send_message(channel, SETTINGS['greeting'].format(member))
 
 def setup(bot):
 
