@@ -53,33 +53,42 @@ class Welcome:
     @commands.command(pass_context=True)
     async def readrules(self, ctx):
         """
-        Elevates a user's access to all public channels by applying the server's
-        base user role to the new member. This command can be called by anyone.
+        Elevates a user's access to all public channels
         """
 
         LOGGER.info(ctx.message)
 
         server = ctx.message.server
-        member_to_elevate = server.get_member(ctx.message.author.id)
 
-        LOGGER.info("User {} invoked readrules command.".format(member_to_elevate))
+        # User likely invoked command from a DM
+        if server is None:
+            LOGGER.info("Command invoked via DM. Ignoring.")
 
-        member_already_user = False
-        for role in member_to_elevate.roles:
+        else:
             
-            if role.name == SETTINGS['base_role']:
+            member_to_elevate = server.get_member(ctx.message.author.id)
 
-                LOGGER.info("Member {} already has a {} role".format(member_to_elevate, SETTINGS['base_role']))
-                member_already_user = True
-                await self.bot.say("You already have access to our public channels")
+            LOGGER.info("User {} invoked readrules command.".format(member_to_elevate))
 
-        if not member_already_user:
+            member_already_user = False
+            for role in member_to_elevate.roles:
+                
+                if role.name == SETTINGS['base_role']:
 
-            LOGGER.info("Adding role {} to member {}".format(SETTINGS['base_role'], member_to_elevate))
-            base_role = discord.utils.get(server.roles, name=SETTINGS['base_role'])
+                    LOGGER.info("Member {} already has a {} role".format(member_to_elevate, SETTINGS['base_role']))
+                    member_already_user = True
+                    await self.bot.say("You already have access to our public channels")
 
-            await self.bot.add_roles(member_to_elevate, base_role)
-            await self.bot.send_message(member_to_elevate, SETTINGS['elevate_confirm'])
+            if not member_already_user:
+
+                roles = server.roles
+                LOGGER.info("All roles: {}".format(roles))
+
+                LOGGER.info("Adding role {} to member {}".format(SETTINGS['base_role'], member_to_elevate))
+                base_role = discord.utils.get(roles, name=SETTINGS['base_role'])
+
+                await self.bot.add_roles(member_to_elevate, base_role)
+                await self.bot.send_message(member_to_elevate, SETTINGS['elevate_confirm'])
 
     async def member_join(self, member: discord.Member):
         """
