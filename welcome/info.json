@@ -1,0 +1,6 @@
+{
+    "AUTHOR": "Josh Stark <stark@linuxserver.io",
+    "DESCRIPTION": "Usage: [p]readrules",
+    "SHORT": "Provides a new member with the ability to promote themselves to the lowest (base) role.",
+    "NAME": "Welcome"    
+}

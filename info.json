@@ -1,0 +1,7 @@
+{
+    "AUTHOR": "Josh Stark <stark@linuxserver.io>",
+    "INSTALL_MSG": "Linuxserver.io Cog Repo",
+    "NAME": "LinuxServer",
+    "SHORT": "Basic user management cogs for a Discord server",
+    "DESCRIPTION": "Basic user management cogs for a Discord server"
+}
