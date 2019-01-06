@@ -51,14 +51,16 @@ class Welcome:
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def readrules(self, ctx: commands.Context):
+    async def readrules(self, ctx):
         """
         Elevates a user's access to all public channels by applying the server's
         base user role to the new member. This command can be called by anyone.
         """
 
+        LOGGER.info(ctx.message)
+
         server = ctx.message.server
-        member_to_elevate = discord.utils.get(server.members, name=ctx.message.author)
+        member_to_elevate = server.get_member(ctx.message.author.id)
 
         LOGGER.info("User {} invoked readrules command.".format(member_to_elevate))
 
