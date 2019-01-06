@@ -35,11 +35,12 @@ import discord
 from discord.ext import commands
 
 SETTINGS = {
-    'greeting': "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you read the #rules, then ping us with `^readrules` to get access to all of our public channels.",
+    'greeting': "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you read the {}, then ping us with `^readrules` to get access to all of our public channels.",
     'elevate_confirm': "Thanks, you now have access to all public channels!",
-    'already_verified': "You already have access to our public channels",
+    'already_verified': "You already have access to our public channels.",
     'base_role': "verified",
-    'default_channel': "new-members"
+    'default_channel': "new-members",
+    'rules_channel': "rules"
 }
 
 class Welcome:
@@ -94,8 +95,12 @@ class Welcome:
 
         LOGGER.info("New member has joined: {}".format(member))
 
-        new_members_channel = discord.utils.get(member.server.channels, name=SETTINGS['default_channel'])
-        await self.bot.send_message(new_members_channel, SETTINGS['greeting'].format(member.mention))
+        channels = member.server.channels
+
+        channel_new_members = discord.utils.get(channels, name=SETTINGS['default_channel'])
+        channel_rules = discord.utils.get(channels, name=SETTINGS['rules_channel'])
+
+        await self.bot.send_message(channel_new_members, SETTINGS['greeting'].format(member.mention, channel_rules.mention))
 
 def setup(bot):
 

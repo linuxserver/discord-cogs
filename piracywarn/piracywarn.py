@@ -64,7 +64,6 @@ class PiracyWarn:
             message_words = message.content.split(' ')
             message_member = server.get_member(message.author.id)
 
-
             for keyword in KEYWORDS:                
                 if keyword in message_words:
                     
