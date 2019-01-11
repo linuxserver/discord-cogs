@@ -35,7 +35,10 @@ import discord
 from discord.ext import commands
 
 SETTINGS = {
-    'greeting': "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you first read our {}. Once you're happy, say `^readrules` in this channel to get access to all of our public channels.",
+    'greeting': (
+        "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you first read our {}."
+        "Once you're happy, say `^readrules` in this channel to get access to all of our public channels."
+    ),
     'elevate_confirm': "Thanks, you now have access to all public channels!",
     'already_verified': "You already have access to our public channels.",
     'base_role': "verified",
@@ -86,7 +89,18 @@ class Welcome:
                 base_role = discord.utils.get(server.roles, name=SETTINGS['base_role'])
 
                 await self.bot.add_roles(member_to_elevate, base_role)
-                await self.bot.send_message(member_to_elevate, SETTINGS['elevate_confirm'])
+
+                try:
+                    
+                    await self.bot.send_message(member_to_elevate, SETTINGS['elevate_confirm'])
+                
+                except discord.errors.DiscordException as e:
+                    
+                    LOGGER.warn("Unable to send DM to {0}. Likely they have disabled DMs. {1.text}".format(member_to_elevate, e))
+                    LOGGER.info("Sending user a mention in the channel instead")
+
+                    channel_new_members = self.get_new_members_channel(server)
+                    await self.bot.send_message(channel_new_members, SETTINGS['elevate_confirm'])
 
     async def member_join(self, member: discord.Member):
         """
@@ -95,12 +109,25 @@ class Welcome:
 
         LOGGER.info("New member has joined: {}".format(member))
 
-        channels = member.server.channels
-
-        channel_new_members = discord.utils.get(channels, name=SETTINGS['default_channel'])
-        channel_rules = discord.utils.get(channels, name=SETTINGS['rules_channel'])
+        channel_new_members = self.get_new_members_channel(member.server)
+        channel_rules = self.get_rules_channel(member.server)
 
         await self.bot.send_message(channel_new_members, SETTINGS['greeting'].format(member.mention, channel_rules.mention))
+
+
+    def get_new_members_channel(self, server: discord.Server):
+        """
+        Gets an instance of the server's #new-members channel
+        """
+
+        return discord.utils.get(server.channels, name=SETTINGS['default_channel'])
+
+    def get_rules_channel(self, server: discord.Server):
+        """
+        Gets an instance of the server's #rules channel
+        """
+
+        return discord.utils.get(server.channels, name=SETTINGS['rules_channel'])
 
 def setup(bot):
 
