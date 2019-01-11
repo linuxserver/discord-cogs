@@ -79,9 +79,10 @@ class Welcome:
                 
                 if role.name == SETTINGS['base_role']:
 
-                    LOGGER.info("Member {} already has a {} role".format(member_to_elevate, SETTINGS['base_role']))
                     member_already_user = True
-                    await self.bot.send_message(member_to_elevate, SETTINGS['already_verified'])
+
+                    LOGGER.info("Member {} already has a {} role".format(member_to_elevate, SETTINGS['base_role']))
+                    await self.send_message(member_to_elevate, SETTINGS['already_verified'])
 
             if not member_already_user:
 
@@ -89,18 +90,7 @@ class Welcome:
                 base_role = discord.utils.get(server.roles, name=SETTINGS['base_role'])
 
                 await self.bot.add_roles(member_to_elevate, base_role)
-
-                try:
-                    
-                    await self.bot.send_message(member_to_elevate, SETTINGS['elevate_confirm'])
-                
-                except discord.errors.DiscordException as e:
-                    
-                    LOGGER.warn("Unable to send DM to {0}. Likely they have disabled DMs. {1.text}".format(member_to_elevate, e))
-                    LOGGER.info("Sending user a mention in the channel instead")
-
-                    channel_new_members = self.get_new_members_channel(server)
-                    await self.bot.send_message(channel_new_members, SETTINGS['elevate_confirm'])
+                await self.send_message(member_to_elevate, SETTINGS['elevate_confirm'], fallback_channel=self.get_new_members_channel(server))
 
     async def member_join(self, member: discord.Member):
         """
@@ -112,8 +102,27 @@ class Welcome:
         channel_new_members = self.get_new_members_channel(member.server)
         channel_rules = self.get_rules_channel(member.server)
 
-        await self.bot.send_message(channel_new_members, SETTINGS['greeting'].format(member.mention, channel_rules.mention))
+        await self.send_message(channel_new_members, SETTINGS['greeting'].format(member.mention, channel_rules.mention))
 
+    async def send_message(self, member_or_channel, message, fallback_channel=None):
+        """
+        Sends a message to a given member or channel of a server. This function wraps the call
+        to ensure that any exceptions are caught and logged. This can occur when
+        users have DMs turned off
+        """
+
+        try:
+
+            await self.bot.send_message(member_or_channel, message)
+
+        except discord.errors.DiscordException as e:
+
+            LOGGER.warn("Unable to send message to {0.name}. If this is a user, they may have disabled DMs. {1.text}".format(member_or_channel, e))
+
+            if fallback_channel is not None:
+
+                LOGGER.info("Sending message to fallback channel: {0.name}".format(fallback_channel))
+                await self.send_message(fallback_channel, message)
 
     def get_new_members_channel(self, server: discord.Server):
         """
