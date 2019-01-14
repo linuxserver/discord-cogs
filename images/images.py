@@ -41,8 +41,8 @@ from datetime import datetime
 GITHUB_API_URL      = "https://api.github.com/repos/linuxserver/docker-{}/releases/latest"
 GITHUB_API_FALLBACK = "https://api.github.com/repos/linuxserver/docker-{}/tags"
 
-DATE_FORMAT_GITHUB = "%d %B %Y at %H:%M:%S"
-DATE_FORMAT_PRETTY = "%Y-%m-%dT%H:%M:%SZ"
+DATE_FORMAT_GITHUB = "%Y-%m-%dT%H:%M:%SZ"
+DATE_FORMAT_PRETTY = "%d %B %Y at %H:%M:%S"
 
 VERSION_PATTERNS = [
     
