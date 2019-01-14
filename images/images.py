@@ -78,19 +78,19 @@ class Images:
             image_to_check = self.clean_image_name(image_name)
 
             try:
-                
+
                 latest_release = self.get_image_information(image_to_check)
                 image_version = self.get_image_version(latest_release)
 
                 build_date = latest_release.get('published_at', "<unknown>")
 
                 await self.bot.send_message(channel, 
-                    "LinuxServer.io Image: {}. Latest application version is `{}`. Built on {}".format(image_to_check, image_version, build_date))
+                    "LinuxServer.io Image: **{}**. Latest application version is `{}`. Built on {}".format(image_to_check, image_version, build_date))
 
             except Exception as e:
                 
                 LOGGER.error("Unable to retrieve version information. {}".format(str(e)))
-                await self.bot.send_message(channel, "Unable to retrieve version information for {}".format(image_to_check))
+                await self.bot.send_message(channel, "Unable to retrieve version information for **{}**".format(image_to_check))
 
     def get_image_information(self, image_name: str):
         """
@@ -100,7 +100,8 @@ class Images:
         """
 
         try:
-                
+            
+            LOGGER.info("Getting image data for {}".format(image_name))
             response = requests.get(GITHUB_API_URL.format(image_name))
             response.raise_for_status
 
@@ -108,10 +109,13 @@ class Images:
 
         except:
                         
+            LOGGER.info("Original 'release' call failed. Falling back to tags.")
             response = requests.get(GITHUB_API_FALLBACK.format(image_name))
             response.raise_for_status
             
-            return response.json()[0]
+            latest_tag = response.json()[0]
+            LOGGER.info(latest_tag)
+            return latest_tag
 
     def clean_image_name(self, image_name: str):
         """
