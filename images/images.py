@@ -36,8 +36,13 @@ LOGGER.addHandler(log_file_handler)
 import discord 
 from discord.ext import commands
 
+from datetime import datetime
+
 GITHUB_API_URL      = "https://api.github.com/repos/linuxserver/docker-{}/releases/latest"
 GITHUB_API_FALLBACK = "https://api.github.com/repos/linuxserver/docker-{}/tags"
+
+DATE_FORMAT_GITHUB = "%d %B %Y at %H:%M:%S"
+DATE_FORMAT_PRETTY = "%Y-%m-%dT%H:%M:%SZ"
 
 VERSION_PATTERNS = [
     
@@ -82,10 +87,21 @@ class Images:
                 latest_release = self.get_image_information(image_to_check)
                 image_version = self.get_image_version(latest_release)
 
-                build_date = latest_release.get('published_at', "<unknown>")
+                build_date = latest_release.get('published_at')
 
-                await self.bot.send_message(channel, 
-                    "LinuxServer.io Image: **{}**. Latest application version is `{}`. Built on {}".format(image_to_check, image_version, build_date))
+                # Only releases have a 'published_at' node
+                if build_date is not None:
+                    
+                    build_date_formatted = datetime.strptime(build_date, DATE_FORMAT_GITHUB).strftime(DATE_FORMAT_PRETTY)
+
+                    await self.bot.send_message(channel, 
+                        "LinuxServer.io Image: **{}**. Latest application version is `{}`. Built on {}".format(image_to_check, image_version, build_date_formatted))
+
+                # Otherwise, it's a tag
+                else:
+
+                    await self.bot.send_message(channel, 
+                        "LinuxServer.io Image: **{}**. Not yet migrated to the new pipeline. Latest tagged build is `{}`.".format(image_to_check, image_version))
 
             except Exception as e:
                 
