@@ -40,6 +40,10 @@ from datetime import datetime
 
 GITHUB_API_URL      = "https://api.github.com/repos/linuxserver/docker-{}/releases/latest"
 GITHUB_API_FALLBACK = "https://api.github.com/repos/linuxserver/docker-{}/tags"
+GITHUB_REPO_URL     = "https://github.com/linuxserver/docker-{}"
+
+MESSAGE_RELEASE = "LinuxServer.io Image: **{}**.\nLatest application version is `{}`.\nBuilt on {}."
+MESSAGE_TAG     = "LinuxServer.io Image: **{}**.\nNot yet migrated to the new pipeline.\nLatest tagged build is `{}`."
 
 DATE_FORMAT_GITHUB = "%Y-%m-%dT%H:%M:%SZ"
 DATE_FORMAT_PRETTY = "%d %B %Y at %H:%M:%S"
@@ -88,25 +92,38 @@ class Images:
                 image_version = self.get_image_version(latest_release)
 
                 build_date = latest_release.get('published_at')
-
-                # Only releases have a 'published_at' node
-                if build_date is not None:
-                    
-                    build_date_formatted = datetime.strptime(build_date, DATE_FORMAT_GITHUB).strftime(DATE_FORMAT_PRETTY)
-
-                    await self.bot.send_message(channel, 
-                        "LinuxServer.io Image: **{}**. Latest application version is `{}`. Built on {}".format(image_to_check, image_version, build_date_formatted))
-
-                # Otherwise, it's a tag
-                else:
-
-                    await self.bot.send_message(channel, 
-                        "LinuxServer.io Image: **{}**. Not yet migrated to the new pipeline. Latest tagged build is `{}`.".format(image_to_check, image_version))
+                migrated = build_date is not None
+            
+                await self.send_embed(channel, image_to_check, image_version, build_date, migrated)
 
             except Exception as e:
                 
                 LOGGER.error("Unable to retrieve version information. {}".format(str(e)))
                 await self.bot.send_message(channel, "Unable to retrieve version information for **{}**".format(image_to_check))
+
+    async def send_embed(self, channel: discord.Channel, image_name: str, image_version: str, build_date: str, migrated: bool):
+        """
+        Sends a rich embed to the Discord channel, with link to the given
+        LinuxServer Docker image.
+        """
+
+        embed = discord.Embed()
+        embed.colour = discord.Colour.orange()
+        embed.type = "rich"
+        
+        embed.title = "Image information for {}".format(image_name)
+        embed.url = GITHUB_REPO_URL.format(image_name)
+
+        if not migrated:
+            embed.description = "_Note:_ This image has not yet been migrated to the new pipeline."
+
+        if build_date is not None:
+            build_date = datetime.strptime(build_date, DATE_FORMAT_GITHUB).strftime(DATE_FORMAT_PRETTY)
+
+        embed.add_field(name="App Version", value=image_version)
+        embed.add_field(name="Build Date", value=build_date)
+
+        await self.bot.send_message(channel, embed=embed)
 
     def get_image_information(self, image_name: str):
         """
