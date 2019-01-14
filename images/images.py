@@ -103,21 +103,17 @@ class Images:
             
             LOGGER.info("Getting image data for {}".format(image_name))
             response = requests.get(GITHUB_API_URL.format(image_name))
-            response.raise_for_status
+            response.raise_for_status()
 
-            latest_release = response.json()
-            LOGGER.info(latest_release)
-            return latest_release
+            return response.json()
 
         except:
                         
             LOGGER.info("Original 'release' call failed. Falling back to tags.")
             response = requests.get(GITHUB_API_FALLBACK.format(image_name))
-            response.raise_for_status
-            
-            latest_tag = response.json()[0]
-            LOGGER.info(latest_tag)
-            return latest_tag
+            response.raise_for_status()
+
+            return response.json()[0]
 
     def clean_image_name(self, image_name: str):
         """
