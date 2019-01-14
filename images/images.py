@@ -118,11 +118,12 @@ class Images:
         if not migrated:
             embed.description = "_Note:_ This image has not yet been migrated to the new pipeline."
 
-        if build_date is not None:
-            build_date = datetime.strptime(build_date, DATE_FORMAT_GITHUB).strftime(DATE_FORMAT_PRETTY)
-
         embed.add_field(name="App Version", value=image_version, inline=False)
-        embed.add_field(name="Build Date", value=build_date, inline=False)
+        
+        if build_date is not None:
+            
+            build_date = datetime.strptime(build_date, DATE_FORMAT_GITHUB).strftime(DATE_FORMAT_PRETTY)
+            embed.add_field(name="Build Date", value=build_date, inline=False)
 
         await self.bot.send_message(channel, embed=embed)
 
