@@ -105,7 +105,9 @@ class Images:
             response = requests.get(GITHUB_API_URL.format(image_name))
             response.raise_for_status
 
-            return response.json()
+            latest_release = response.json()
+            LOGGER.info(latest_release)
+            return latest_release
 
         except:
                         
