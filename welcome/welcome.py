@@ -36,7 +36,7 @@ from discord.ext import commands
 
 SETTINGS = {
     'greeting': (
-        "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you first read our {}."
+        "Welcome to the LinuxServer.io Discord server {}! We kindly ask that you first read our {}. "
         "Once you're happy, say `^readrules` in this channel to get access to all of our public channels."
     ),
     'elevate_confirm': "Thanks, you now have access to all public channels!",

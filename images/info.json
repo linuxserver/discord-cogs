@@ -1,0 +1,7 @@
+{
+    "AUTHOR": "Josh Stark <stark@linuxserver.io",
+    "DESCRIPTION": "Provides a mechanism for members to check for the latest version of LSIO images",
+    "SHORT": "Provides a mechanism for members to check for the latest version of LSIO images",
+    "NAME": "Images",
+    "REQUIREMENTS": "requests"
+}
