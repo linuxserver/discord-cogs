@@ -1,6 +1,0 @@
-{
-    "AUTHOR": "Josh Stark <stark@linuxserver.io",
-    "DESCRIPTION": "Adds a message listener to the server that checks for certain keywords",
-    "SHORT": "Adds a message listener to the server that checks for certain keywords",
-    "NAME": "Piracy Warn"    
-}
