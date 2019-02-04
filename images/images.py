@@ -51,10 +51,10 @@ DATE_FORMAT_PRETTY = "%d %B %Y at %H:%M:%S"
 VERSION_PATTERNS = [
     
     # Original Jenkins build number
-    r"([0-9]{3})", 
+    r"^([0-9]{3})$", 
     
     # New packaging version format
-    r"(.+)-pkg-[a-f0-9]{8}-ls[0-9]+"
+    r"^(.+)-pkg-[a-f0-9]{8}-ls[0-9]+$"
 ]
 
 class Images:
