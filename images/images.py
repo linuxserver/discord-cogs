@@ -54,7 +54,7 @@ VERSION_PATTERNS = [
     r"^([0-9]{3})$", 
     
     # New packaging version format
-    r"^(.+)-pkg-[a-f0-9]{8}-ls[0-9]+$"
+    r"^(.+)-ls[0-9]+$"
 ]
 
 class Images:
